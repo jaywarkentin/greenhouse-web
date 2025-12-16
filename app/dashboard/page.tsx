@@ -13,7 +13,7 @@ import {
 
 export default function Dashboard() {
   const [readings, setReadings] = useState<any[]>([]);
-
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
   fetchReadings();
 
@@ -22,6 +22,14 @@ export default function Dashboard() {
 }, []);
   
   async function fetchReadings() {
+    const {
+  data: { session },
+} = await supabase.auth.getSession();
+
+if (!session) {
+  window.location.href = "/login";
+  return;
+}
     const { data, error } = await supabase
       .from("readings")
       .select("*")
